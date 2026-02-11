@@ -6,11 +6,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/marcoscarbajal/testflow-ai"
+    "url": "https://github.com/carbajalmarcos/testflow-ai"
   },
-  "homepage": "https://github.com/marcoscarbajal/testflow-ai#readme",
+  "homepage": "https://github.com/carbajalmarcos/testflow-ai#readme",
   "bugs": {
-    "url": "https://github.com/marcoscarbajal/testflow-ai/issues"
+    "url": "https://github.com/carbajalmarcos/testflow-ai/issues"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
