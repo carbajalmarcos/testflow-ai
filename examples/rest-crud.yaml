@@ -1,0 +1,76 @@
+# REST CRUD — Create, read, update, verify a user.
+
+name: User CRUD
+description: Full lifecycle test for a REST user resource
+tags:
+  - users
+  - crud
+  - smoke
+
+steps:
+  - name: Create user
+    request:
+      method: POST
+      url: "{api}/users"
+      headers:
+        Content-Type: application/json
+      body:
+        email: alice@example.com
+        name: Alice
+    capture:
+      - name: userId
+        path: data.id
+      - name: userEmail
+        path: data.email
+    assertions:
+      - path: status
+        operator: equals
+        value: 201
+      - path: data.email
+        operator: equals
+        value: alice@example.com
+      - path: data.id
+        operator: exists
+
+  - name: Read user
+    request:
+      method: GET
+      url: "{api}/users/${userId}"
+    assertions:
+      - path: status
+        operator: equals
+        value: 200
+      - path: data.id
+        operator: equals
+        value: "${userId}"
+      - path: data.email
+        operator: equals
+        value: "${userEmail}"
+
+  - name: Update user
+    request:
+      method: PUT
+      url: "{api}/users/${userId}"
+      headers:
+        Content-Type: application/json
+      body:
+        name: Alice Updated
+    assertions:
+      - path: status
+        operator: equals
+        value: 200
+      - path: data.name
+        operator: equals
+        value: Alice Updated
+
+  - name: Verify update
+    request:
+      method: GET
+      url: "{api}/users/${userId}"
+    assertions:
+      - path: data.name
+        operator: equals
+        value: Alice Updated
+      - path: data.email
+        operator: equals
+        value: "${userEmail}"

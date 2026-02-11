@@ -1,0 +1,58 @@
+# GraphQL — Mutation + query with variable capture.
+
+name: GraphQL User Flow
+description: Create a user via mutation, then query it back
+tags:
+  - graphql
+  - users
+
+steps:
+  - name: Create user (mutation)
+    request:
+      method: POST
+      url: "{graphql}"
+      graphql:
+        query: |
+          mutation CreateUser($input: CreateUserInput!) {
+            createUser(input: $input) {
+              id
+              email
+              name
+            }
+          }
+        variables:
+          input:
+            email: bob@example.com
+            name: Bob
+    capture:
+      - name: userId
+        path: data.createUser.id
+    assertions:
+      - path: data.createUser.email
+        operator: equals
+        value: bob@example.com
+      - path: data.createUser.id
+        operator: exists
+
+  - name: Query user
+    request:
+      method: POST
+      url: "{graphql}"
+      graphql:
+        query: |
+          query GetUser($id: ID!) {
+            user(id: $id) {
+              id
+              email
+              name
+            }
+          }
+        variables:
+          id: "${userId}"
+    assertions:
+      - path: data.user.id
+        operator: equals
+        value: "${userId}"
+      - path: data.user.email
+        operator: equals
+        value: bob@example.com
