@@ -1,0 +1,97 @@
+# Todo List CRUD — Complete lifecycle test
+
+name: Todo CRUD Flow
+description: Create, read, update, and delete a todo item
+tags:
+  - todos
+  - crud
+  - smoke
+
+steps:
+  - name: Create todo
+    request:
+      method: POST
+      url: "{api}/todos"
+      headers:
+        Content-Type: application/json
+      body:
+        title: "Buy groceries"
+        completed: false
+    capture:
+      - name: todoId
+        path: data.id
+      - name: todoTitle
+        path: data.title
+    assertions:
+      - path: status
+        operator: equals
+        value: 201
+      - path: data.title
+        operator: equals
+        value: "Buy groceries"
+      - path: data.completed
+        operator: equals
+        value: false
+      - path: data.id
+        operator: exists
+
+  - name: Read todo
+    request:
+      method: GET
+      url: "{api}/todos/${todoId}"
+    assertions:
+      - path: status
+        operator: equals
+        value: 200
+      - path: data.id
+        operator: equals
+        value: "${todoId}"
+      - path: data.title
+        operator: equals
+        value: "${todoTitle}"
+
+  - name: Update todo
+    request:
+      method: PUT
+      url: "{api}/todos/${todoId}"
+      headers:
+        Content-Type: application/json
+      body:
+        completed: true
+    assertions:
+      - path: status
+        operator: equals
+        value: 200
+      - path: data.completed
+        operator: equals
+        value: true
+
+  - name: Verify update
+    request:
+      method: GET
+      url: "{api}/todos/${todoId}"
+    assertions:
+      - path: data.completed
+        operator: equals
+        value: true
+      - path: data.title
+        operator: equals
+        value: "${todoTitle}"
+
+  - name: Delete todo
+    request:
+      method: DELETE
+      url: "{api}/todos/${todoId}"
+    assertions:
+      - path: status
+        operator: equals
+        value: 200
+
+  - name: Verify deletion
+    request:
+      method: GET
+      url: "{api}/todos/${todoId}"
+    assertions:
+      - path: status
+        operator: equals
+        value: 404

@@ -1,0 +1,59 @@
+# GraphQL Todo Flow — Mutation + query with variable capture
+
+name: GraphQL Todo Flow
+description: Create a todo via mutation, then query it back
+tags:
+  - graphql
+  - todos
+
+steps:
+  - name: Create todo (mutation)
+    request:
+      method: POST
+      url: "{graphql}"
+      graphql:
+        query: |
+          mutation CreateTodo($input: CreateTodoInput!) {
+            createTodo(input: $input) {
+              id
+              title
+              completed
+              createdAt
+            }
+          }
+        variables:
+          input:
+            title: "Learn testflow-ai"
+            completed: false
+    capture:
+      - name: todoId
+        path: data.createTodo.id
+    assertions:
+      - path: data.createTodo.title
+        operator: equals
+        value: "Learn testflow-ai"
+      - path: data.createTodo.id
+        operator: exists
+
+  - name: Query todo
+    request:
+      method: POST
+      url: "{graphql}"
+      graphql:
+        query: |
+          query GetTodo($id: ID!) {
+            todo(id: $id) {
+              id
+              title
+              completed
+            }
+          }
+        variables:
+          id: "${todoId}"
+    assertions:
+      - path: data.todo.id
+        operator: equals
+        value: "${todoId}"
+      - path: data.todo.title
+        operator: equals
+        value: "Learn testflow-ai"

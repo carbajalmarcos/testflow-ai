@@ -2,14 +2,18 @@
 
 # 🧪 testflow-ai
 
-**Declarative API testing powered by YAML flows**
+**YAML API flows + optional LLM assertions (local Ollama or cloud)**
 
-*Version-controlled • Human-readable • AI-friendly*
+*Version-controlled • CI-friendly • Human-readable*
 
 [![npm version](https://img.shields.io/npm/v/testflow-ai.svg?style=for-the-badge&color=blue)](https://www.npmjs.com/package/testflow-ai)
 [![npm downloads](https://img.shields.io/npm/dm/testflow-ai.svg?style=for-the-badge&color=green)](https://www.npmjs.com/package/testflow-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-green.svg?style=for-the-badge)](https://nodejs.org)
+
+✅ **Multi-step flows** (create → capture → reuse → assert)  
+🤖 **Assert "hard" responses with AI** (privacy-first via Ollama)  
+📄 **Keep API context in Markdown** (great for humans + AI agents)
 
 [📖 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [💻 Examples](#-real-world-example) • [🤖 AI Providers](#-ai-powered-evaluation)
 
@@ -23,9 +27,56 @@
 
 > **💡 Origin story (side projects & frustration):**  
 > While hacking on side projects and small backends, I ended up with **dozens of endpoints**: auth, users, tasks, webhooks, background jobs…  
-> I was jumping between Postman collections, ad‑hoc scripts, and “please hit these endpoints” prompts to AI agents. I wanted something that felt more like a **test agent**:  
+> I was jumping between Postman collections, ad‑hoc scripts, and "please hit these endpoints" prompts to AI agents. I wanted something that felt more like a **test agent**:  
 > a tool that could **create data, mutate it, delete it, and walk full flows end‑to‑end**, but defined in plain files, close to the code, and easy to run in CI.  
 > **testflow-ai** is that tool: a thin engine that turns YAML flows into real HTTP calls, variable captures, assertions, and (if you want) AI‑powered checks.
+
+---
+
+## ✨ Why it's different
+
+Most API testing tools are either **GUI-first** (collections) or **code-first** (JS/TS test code).  
+**testflow-ai** is **flow-first**: readable YAML that runs in CI — with an optional AI judge when classic assertions aren't enough.
+
+**What you get:**
+
+- **Flow engine**: multi-step scenarios with capture + interpolation (CRUD, auth, webhooks, background jobs)
+- **AI assertions**: validate complex text/structured responses with natural language checks (Ollama/OpenAI/Anthropic)
+- **Context-as-docs**: a Markdown file that explains base URLs, endpoints, and rules — perfect input for AI agents too
+
+---
+
+## ✅ When to use testflow-ai
+
+- You want **version-controlled API E2E flows** (not a GUI collection)
+- You need **multi-step chaining** (create → capture id → update → verify)
+- You want **CI-ready output** (console/json/markdown + exit codes)
+- You sometimes need an **AI judge** for fuzzy checks (content quality, summaries, "is this coherent?")
+
+## 🚫 When NOT to use it
+
+- You only need **schema/property-based fuzzing** from OpenAPI
+- You prefer **writing tests in code** (Jest/Vitest) with full programmatic control
+- You need **browser/UI testing** (Playwright/Cypress territory)
+
+---
+
+## 🆚 What testflow-ai optimizes for
+
+<div align="center">
+
+| Goal | testflow-ai |
+|:----:|:-----------:|
+| Human-readable flows in Git | ✅ |
+| Multi-step chaining + captures | ✅ |
+| CI-friendly outputs | ✅ |
+| Optional AI-based assertions | ✅ |
+| GUI collections | ❌ (not a goal) |
+| Full code-based test suites | ❌ (use your test framework) |
+
+</div>
+
+---
 
 ### ✨ Key Features
 
@@ -50,60 +101,54 @@
 
 ## 🚀 Quick Start
 
-### 1️⃣ Install
-
 ```bash
-npm install testflow-ai
+npm i -D testflow-ai
 ```
 
-### 2️⃣ Create a test flow
+**Create `context.md`:**
 
-Create `tests/health.yaml`:
+```markdown
+## Base URLs
+- api: http://localhost:3000
+```
+
+**Create `tests/todo.yaml`:**
 
 ```yaml
-name: Health Check
+name: Todo flow
 tags: [smoke]
 
 steps:
-  - name: Ping API
+  - name: Create todo
     request:
-      method: GET
-      url: http://localhost:3000/health
+      method: POST
+      url: "{api}/todos"
+      body: { title: "Buy milk", completed: false }
+    capture:
+      - name: todoId
+        path: data.id
     assertions:
       - path: status
         operator: equals
-        value: 200
+        value: 201
+
+  - name: Fetch todo
+    request:
+      method: GET
+      url: "{api}/todos/${todoId}"
+    assertions:
+      - path: data.title
+        operator: equals
+        value: "Buy milk"
 ```
 
-### 3️⃣ Run
+**Run:**
 
 ```bash
-npx testflow tests/health.yaml
+npx testflow --context ./context.md tests/todo.yaml
 ```
 
 **That's it.** No config files, no GUI, no account.
-
----
-
-## 💡 Why testflow-ai?
-
-I was building a backend that started as a simple API and grew into a system with GraphQL, async workers, state machines, and AI-powered evaluations.
-
-Testing started simple — a few requests in Postman. Then the project scaled:
-
-<div align="center">
-
-| ❌ Problem | ✅ Solution |
-|:----------:|:-----------:|
-| **Postman / Insomnia** became unmanageable | YAML files in version control |
-| **IDE AI assistants** burned tokens, lost context | Local AI via Ollama (free, private) |
-| **MCP servers** required complex setup | Zero dependencies beyond Node.js |
-| **Manual token copying** between requests | Automatic variable capture |
-| **No CI/CD integration** | JSON output, exit codes, GitHub Actions ready |
-
-</div>
-
-**testflow-ai** solves all of this.
 
 ---
 
@@ -171,7 +216,8 @@ process.exit(report.failedFlows > 0 ? 1 : 0);
 
 ---
 
-## 💻 Real-World Example
+<details>
+<summary><b>💻 Real-World Example</b> (click to expand)</summary>
 
 Here's a complete example using a Todo List API:
 
@@ -313,9 +359,12 @@ const executor = new FlowExecutor(context, true);
 const result = await executor.executeFlow(flow);
 ```
 
+</details>
+
 ---
 
-## 📝 Test Flow Reference
+<details>
+<summary><b>📝 Test Flow Reference</b> (click to expand)</summary>
 
 ### Basic structure
 
@@ -436,9 +485,12 @@ steps:
         value: "COMPLETED"
 ```
 
+</details>
+
 ---
 
-## ✅ Assertions
+<details>
+<summary><b>✅ Assertions</b> (click to expand)</summary>
 
 <div align="center">
 
@@ -463,6 +515,8 @@ steps:
 - `httpStatus` — always the HTTP status code
 - `data.field` — response body field
 - `data.items[0].id` — array access
+
+</details>
 
 ---
 
@@ -605,9 +659,75 @@ steps:
 
 > **🔒 Privacy note:** Ollama runs entirely locally. OpenAI and Anthropic send data to their APIs. Choose based on your privacy requirements.
 
+### 🤖 AI assertions in CI (recommended settings)
+
+AI checks can be non-deterministic. For CI, prefer:
+
+- **Deterministic settings** (e.g. `temperature: 0` for OpenAI/Anthropic)
+- **Short, specific prompts** (avoid vague questions)
+- **Stable models** (avoid preview/beta models)
+
+Example:
+
+```typescript
+ai: {
+  provider: 'openai',
+  model: 'gpt-4o-mini',
+  // OpenAI doesn't expose temperature in our API yet, but use stable models
+}
+```
+
 ---
 
-## 📄 Context Files
+## 🔒 Security & secrets
+
+- **Avoid committing API keys.** Use environment variables (e.g. `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`).
+- The runner **should redact** common secret fields in logs (Authorization headers, tokens, cookies).
+- Keep sensitive data out of YAML files — use environment variable interpolation or context files with `.gitignore`.
+
+Example:
+
+```yaml
+headers:
+  Authorization: "Bearer ${API_TOKEN}"  # Use env vars
+```
+
+</details>
+
+---
+
+<details>
+<summary><b>🧩 YAML schema & autocomplete (VSCode)</b> (click to expand)</summary>
+
+We provide a JSON Schema for `*.yaml` test flows so you get autocomplete + validation in editors.
+
+**VSCode setup** (`.vscode/settings.json`):
+
+```json
+{
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/carbajalmarcos/testflow-ai/main/schemas/testflow.schema.json": [
+      "tests/**/*.yaml",
+      "**/*.testflow.yaml"
+    ]
+  }
+}
+```
+
+This gives you:
+
+- ✅ Autocomplete for `name`, `steps`, `request`, `assertions`, etc.
+- ✅ Validation for required fields and types
+- ✅ Hover documentation for operators and options
+
+> **Note:** Schema file coming soon. For now, TypeScript types are available via `import type { TestFlow } from 'testflow-ai'`.
+
+</details>
+
+---
+
+<details>
+<summary><b>📄 Context Files</b> (click to expand)</summary>
 
 Define your project context in Markdown. The runner uses it to resolve `{baseUrlKey}` references in your YAML flows.
 
@@ -636,9 +756,12 @@ Brief description of your API.
 - model: llama3.2:3b
 ```
 
+</details>
+
 ---
 
-## 🔄 CI/CD Integration
+<details>
+<summary><b>🔄 CI/CD Integration</b> (click to expand)</summary>
 
 ### GitHub Actions
 
@@ -665,9 +788,12 @@ jobs:
 - `0` — all flows passed
 - `1` — one or more flows failed
 
+</details>
+
 ---
 
-## 📊 Output Examples
+<details>
+<summary><b>📊 Output Examples</b> (click to expand)</summary>
 
 ### Console Output
 
@@ -702,9 +828,12 @@ Narrative:
 ══════════════════════════════════════════════════════════════
 ```
 
+</details>
+
 ---
 
-## 🗺️ Roadmap
+<details>
+<summary><b>🗺️ Roadmap</b> (click to expand)</summary>
 
 - [ ] Database assertions (verify records directly via SQL)
 - [ ] gRPC / RPC support
@@ -713,6 +842,8 @@ Narrative:
 - [ ] Parallel flow execution
 - [ ] HTML report output
 - [ ] `testflow init` wizard
+
+</details>
 
 ---
 
