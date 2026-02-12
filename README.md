@@ -19,9 +19,13 @@
 
 ## 🎯 What is testflow-ai?
 
-**testflow-ai** lets you define API tests in YAML files, run them from the command line or as a library, and use AI models (local or cloud) for intelligent assertions. No GUI, no vendor lock-in, works with any HTTP/GraphQL API.
+**testflow-ai** lets you describe API scenarios in YAML files, run them from the command line or as a library, and (optionally) ask an AI model to judge complex responses. No GUI, no vendor lock‑in, and it works with any HTTP/GraphQL API.
 
-> **💡 Born from real-world frustration:** After months of testing APIs with Postman and burning tokens with ChatGPT, I built this to centralize tests in version-controlled YAML files with local AI support.
+> **💡 Origin story (side projects & frustration):**  
+> While hacking on side projects and small backends, I ended up with **dozens of endpoints**: auth, users, tasks, webhooks, background jobs…  
+> I was jumping between Postman collections, ad‑hoc scripts, and “please hit these endpoints” prompts to AI agents. I wanted something that felt more like a **test agent**:  
+> a tool that could **create data, mutate it, delete it, and walk full flows end‑to‑end**, but defined in plain files, close to the code, and easy to run in CI.  
+> **testflow-ai** is that tool: a thin engine that turns YAML flows into real HTTP calls, variable captures, assertions, and (if you want) AI‑powered checks.
 
 ### ✨ Key Features
 
@@ -169,21 +173,23 @@ process.exit(report.failedFlows > 0 ? 1 : 0);
 
 ## 💻 Real-World Example
 
-Here's how we use it in production at [educational-rewards](https://github.com/carbajalmarcos/educational-rewards):
+Here's a complete example using a Todo List API:
 
 ### Project Structure
 
 ```
-tests/declarative/
-├── index.ts              # Test runner
-├── context.md            # API context
-└── flows/
-    ├── health-check.yaml
-    ├── complete-reward-flow.yaml
-    └── submission-attempts.yaml
+my-api/
+├── tests/
+│   ├── index.ts              # Test runner
+│   ├── context.md            # API context
+│   └── flows/
+│       ├── health-check.yaml
+│       ├── todo-crud.yaml
+│       └── todo-complete-flow.yaml
+└── package.json
 ```
 
-### Test Runner (`index.ts`)
+### Test Runner (`tests/index.ts`)
 
 ```typescript
 import { runTests, type RunnerOptions } from 'testflow-ai';
@@ -205,55 +211,86 @@ async function main() {
 main();
 ```
 
-### Context File (`context.md`)
+### Context File (`tests/context.md`)
 
 ```markdown
-# Mambita API Context
+# Todo List API
+
+## Description
+A simple REST API for managing todo items.
 
 ## Base URLs
+- api: http://localhost:3000
 - graphql: http://localhost:3000/graphql
-- tasks: http://localhost:8000
 
 ## Endpoints
+- POST /todos - Create a new todo
+- GET /todos/:id - Get todo by ID
+- PUT /todos/:id - Update todo
+- DELETE /todos/:id - Delete todo
 - POST /graphql - GraphQL endpoint
-- POST /api/v1/pool/seed - Seed task pool
 ```
 
-### Test Flow (`flows/complete-reward-flow.yaml`)
+### Test Flow (`tests/flows/todo-crud.yaml`)
 
 ```yaml
-name: Complete Reward Flow (E2E)
-tags: [e2e, reward]
+name: Todo CRUD Flow
+tags: [todos, crud, smoke]
 
 steps:
-  - name: Start reward
+  - name: Create todo
     request:
       method: POST
-      url: "{graphql}"
-      graphql:
-        query: |
-          mutation StartReward($input: StartRewardInput!) {
-            startReward(input: $input) {
-              id
-              state
-              taskInstances { id state }
-            }
-          }
-        variables:
-          input:
-            childId: "${childId}"
-            catalogRewardId: "${catalogItemId}"
+      url: "{api}/todos"
+      headers:
+        Content-Type: application/json
+      body:
+        title: "Buy groceries"
+        completed: false
     capture:
-      - name: rewardId
-        path: data.startReward.id
+      - name: todoId
+        path: data.id
+    assertions:
+      - path: status
+        operator: equals
+        value: 201
+      - path: data.title
+        operator: equals
+        value: "Buy groceries"
+
+  - name: Get todo
+    request:
+      method: GET
+      url: "{api}/todos/${todoId}"
+    assertions:
+      - path: data.id
+        operator: equals
+        value: "${todoId}"
+
+  - name: Update todo
+    request:
+      method: PUT
+      url: "{api}/todos/${todoId}"
+      headers:
+        Content-Type: application/json
+      body:
+        completed: true
+    assertions:
+      - path: data.completed
+        operator: equals
+        value: true
 ```
 
 ### Running Tests
 
 ```bash
-pnpm testflow:run              # All tests
-pnpm testflow:smoke            # Smoke tests only
-pnpm testflow submission-attempts  # Specific flow
+# Add to package.json scripts:
+"test:e2e": "ts-node tests/index.ts"
+"test:smoke": "ts-node tests/index.ts --tags=smoke"
+
+# Then run:
+npm run test:e2e
+npm run test:smoke
 ```
 
 ### Advanced usage
@@ -683,10 +720,22 @@ Narrative:
 
 See the [`examples/`](./examples) directory for:
 
-- REST CRUD flows
-- GraphQL queries and mutations
-- Authentication flows
-- Context file templates
+- **Todo List CRUD** (`todo-crud.yaml`) - Complete REST CRUD flow
+- **Todo GraphQL** (`todo-graphql.yaml`) - GraphQL mutations and queries
+- **REST CRUD** (`rest-crud.yaml`) - User management example
+- **GraphQL Flow** (`graphql-flow.yaml`) - GraphQL with variable capture
+- **Auth Flow** (`auth-flow.yaml`) - Authentication and protected routes
+- **Context Files** (`context.md`, `todo-list-context.md`) - API context templates
+
+**Quick start with examples:**
+
+```bash
+# Run todo list examples
+npx testflow --dir ./examples --context ./examples/todo-list-context.md todo-crud.yaml
+
+# Run all examples
+npx testflow --dir ./examples --context ./examples/context.md
+```
 
 ---
 
@@ -709,8 +758,6 @@ MIT
 If you find **testflow-ai** useful, consider supporting its development:
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/carbajalmarcos)
-[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-ea4aaa?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sponsors/carbajalmarcos)
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/carbajalmarcos)
 
 **Crypto donations:**
 
