@@ -1,65 +1,65 @@
-# testflow-ai
+<div align="center">
 
-> Declarative API testing powered by YAML flows. Version-controlled, human-readable, AI-friendly.
+# 🧪 testflow-ai
 
-[![npm version](https://img.shields.io/npm/v/testflow-ai.svg)](https://www.npmjs.com/package/testflow-ai)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D18-green.svg)](https://nodejs.org)
+**Declarative API testing powered by YAML flows**
 
----
+*Version-controlled • Human-readable • AI-friendly*
 
-## Why?
+[![npm version](https://img.shields.io/npm/v/testflow-ai.svg?style=for-the-badge&color=blue)](https://www.npmjs.com/package/testflow-ai)
+[![npm downloads](https://img.shields.io/npm/dm/testflow-ai.svg?style=for-the-badge&color=green)](https://www.npmjs.com/package/testflow-ai)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18-green.svg?style=for-the-badge)](https://nodejs.org)
 
-I was building a backend that started as a simple API and grew into a system with GraphQL, async workers, state machines, and AI-powered evaluations.
+[📖 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [💻 Examples](#-real-world-example) • [🤖 AI Providers](#-ai-powered-evaluation)
 
-Testing started simple — a few requests in Postman. Then the project scaled:
-
-- **Postman / Insomnia** became unmanageable. Dozens of collections, manual token copying, no version control.
-- **IDE AI assistants** worked for one-off requests but burned through tokens, lost context, and couldn't maintain complex multi-step flows.
-- **MCP servers and tooling** required significant setup and ongoing maintenance.
-
-I needed something that:
-
-1. Lives in the repo alongside my code
-2. Defines multi-step flows declaratively
-3. Captures variables between steps automatically
-4. Supports REST, GraphQL, and async operations
-5. Can leverage a **local AI model** for intelligent assertions
-6. Runs in CI/CD with zero cloud dependencies
-
-**testflow-ai** is the result.
+</div>
 
 ---
 
-## Features
+## 🎯 What is testflow-ai?
 
-- 📝 **YAML test flows** — define test sequences declaratively
-- 🔗 **Variable capture** — extract values from responses, reuse in later steps
-- ✅ **Rich assertions** — equals, contains, exists, greaterThan, matches, and more
-- 🔄 **GraphQL native** — first-class support for queries and mutations
-- ⏳ **Async polling** — `waitUntil` for operations that take time
-- 🤖 **AI evaluation** — assert with natural language via a local Ollama model
-- 📄 **Context files** — define base URLs, endpoints, and rules in Markdown
-- 📊 **Multiple formats** — console, JSON, or Markdown reports
-- 🎯 **Tag filtering** — run subsets of your test suite
-- 🖥️ **CLI + API** — use from the terminal or import as a library
+**testflow-ai** lets you define API tests in YAML files, run them from the command line or as a library, and use AI models (local or cloud) for intelligent assertions. No GUI, no vendor lock-in, works with any HTTP/GraphQL API.
+
+> **💡 Born from real-world frustration:** After months of testing APIs with Postman and burning tokens with ChatGPT, I built this to centralize tests in version-controlled YAML files with local AI support.
+
+### ✨ Key Features
+
+<div align="center">
+
+| 🎨 Feature | 📝 Description |
+|:----------:|:-------------:|
+| **📝 YAML Flows** | Define test sequences declaratively — version-controlled and human-readable |
+| **🔗 Variable Capture** | Extract values from responses, reuse in later steps automatically |
+| **✅ Rich Assertions** | 10+ operators: equals, contains, exists, greaterThan, matches, and more |
+| **🔄 GraphQL Native** | First-class support for queries and mutations |
+| **⏳ Async Polling** | `waitUntil` for operations that take time (background jobs, processing) |
+| **🤖 AI Evaluation** | Assert with natural language using Ollama, OpenAI, or Anthropic |
+| **📄 Context Files** | Define base URLs, endpoints, and rules in Markdown |
+| **📊 Multiple Formats** | Console (colored), JSON (CI/CD), or Markdown reports |
+| **🎯 Tag Filtering** | Run subsets of your test suite (`--tags smoke,e2e`) |
+| **🖥️ CLI + API** | Use from terminal (`npx testflow`) or import as a library |
+
+</div>
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### 1. Install
+### 1️⃣ Install
 
 ```bash
 npm install testflow-ai
 ```
 
-### 2. Create a test flow
+### 2️⃣ Create a test flow
+
+Create `tests/health.yaml`:
 
 ```yaml
-# tests/health.yaml
 name: Health Check
 tags: [smoke]
+
 steps:
   - name: Ping API
     request:
@@ -71,17 +71,39 @@ steps:
         value: 200
 ```
 
-### 3. Run
+### 3️⃣ Run
 
 ```bash
 npx testflow tests/health.yaml
 ```
 
-That's it. No config files, no GUI, no account.
+**That's it.** No config files, no GUI, no account.
 
 ---
 
-## Installation
+## 💡 Why testflow-ai?
+
+I was building a backend that started as a simple API and grew into a system with GraphQL, async workers, state machines, and AI-powered evaluations.
+
+Testing started simple — a few requests in Postman. Then the project scaled:
+
+<div align="center">
+
+| ❌ Problem | ✅ Solution |
+|:----------:|:-----------:|
+| **Postman / Insomnia** became unmanageable | YAML files in version control |
+| **IDE AI assistants** burned tokens, lost context | Local AI via Ollama (free, private) |
+| **MCP servers** required complex setup | Zero dependencies beyond Node.js |
+| **Manual token copying** between requests | Automatic variable capture |
+| **No CI/CD integration** | JSON output, exit codes, GitHub Actions ready |
+
+</div>
+
+**testflow-ai** solves all of this.
+
+---
+
+## 📦 Installation
 
 ```bash
 npm install testflow-ai
@@ -93,37 +115,40 @@ yarn add testflow-ai
 
 ---
 
-## CLI Usage
+## 🖥️ CLI Usage
 
 ```bash
 # Run specific files
-testflow flow1.yaml flow2.yaml
+npx testflow flow1.yaml flow2.yaml
 
 # Run all YAML files in a directory
-testflow --dir ./tests
+npx testflow --dir ./tests
 
 # Use a context file for base URLs
-testflow --dir ./tests --context ./context.md
+npx testflow --dir ./tests --context ./context.md
 
-# Filter by tags
-testflow --dir ./tests --tags smoke,auth
+# Filter by tags (run only smoke tests)
+npx testflow --dir ./tests --tags smoke
 
 # JSON output (for CI/CD)
-testflow --dir ./tests --format json
+npx testflow --dir ./tests --format json
 
 # Markdown output (for reports)
-testflow --dir ./tests --format markdown
+npx testflow --dir ./tests --format markdown
 
-# Verbose mode
-testflow --dir ./tests -v
+# Verbose mode (see step-by-step execution)
+npx testflow --dir ./tests -v
 
-# With AI evaluation (Ollama)
-testflow --dir ./tests --ai-model llama3.2:3b
+# With AI evaluation
+npx testflow --dir ./tests --ai-provider ollama --ai-model llama3.2:3b
+npx testflow --dir ./tests --ai-provider openai --ai-key $OPENAI_API_KEY --ai-model gpt-4o-mini
 ```
 
 ---
 
-## Programmatic API
+## 💻 Programmatic API
+
+### Simple usage
 
 ```typescript
 import { runTests } from 'testflow-ai';
@@ -140,6 +165,97 @@ console.log(`${report.passedFlows}/${report.totalFlows} passed`);
 process.exit(report.failedFlows > 0 ? 1 : 0);
 ```
 
+---
+
+## 💻 Real-World Example
+
+Here's how we use it in production at [educational-rewards](https://github.com/carbajalmarcos/educational-rewards):
+
+### Project Structure
+
+```
+tests/declarative/
+├── index.ts              # Test runner
+├── context.md            # API context
+└── flows/
+    ├── health-check.yaml
+    ├── complete-reward-flow.yaml
+    └── submission-attempts.yaml
+```
+
+### Test Runner (`index.ts`)
+
+```typescript
+import { runTests, type RunnerOptions } from 'testflow-ai';
+import * as path from 'path';
+
+async function main() {
+  const options: RunnerOptions = {
+    contextFile: path.join(__dirname, 'context.md'),
+    testDir: path.join(__dirname, 'flows'),
+    tags: process.argv.includes('--tags=smoke') ? ['smoke'] : undefined,
+    format: 'console',
+    verbose: false,
+  };
+
+  const report = await runTests(options);
+  process.exit(report.failedFlows > 0 ? 1 : 0);
+}
+
+main();
+```
+
+### Context File (`context.md`)
+
+```markdown
+# Mambita API Context
+
+## Base URLs
+- graphql: http://localhost:3000/graphql
+- tasks: http://localhost:8000
+
+## Endpoints
+- POST /graphql - GraphQL endpoint
+- POST /api/v1/pool/seed - Seed task pool
+```
+
+### Test Flow (`flows/complete-reward-flow.yaml`)
+
+```yaml
+name: Complete Reward Flow (E2E)
+tags: [e2e, reward]
+
+steps:
+  - name: Start reward
+    request:
+      method: POST
+      url: "{graphql}"
+      graphql:
+        query: |
+          mutation StartReward($input: StartRewardInput!) {
+            startReward(input: $input) {
+              id
+              state
+              taskInstances { id state }
+            }
+          }
+        variables:
+          input:
+            childId: "${childId}"
+            catalogRewardId: "${catalogItemId}"
+    capture:
+      - name: rewardId
+        path: data.startReward.id
+```
+
+### Running Tests
+
+```bash
+pnpm testflow:run              # All tests
+pnpm testflow:smoke            # Smoke tests only
+pnpm testflow submission-attempts  # Specific flow
+```
+
 ### Advanced usage
 
 ```typescript
@@ -149,7 +265,7 @@ import { TestRunner, FlowExecutor, parseYamlFile, parseContextFile } from 'testf
 const runner = new TestRunner({
   contextFile: './context.md',
   testFiles: ['./tests/critical.yaml'],
-  ai: { model: 'mistral:7b' },
+  ai: { provider: 'ollama', model: 'mistral:7b' },
 });
 const report = await runner.run();
 
@@ -162,56 +278,53 @@ const result = await executor.executeFlow(flow);
 
 ---
 
-## Test Flow Reference
+## 📝 Test Flow Reference
 
 ### Basic structure
 
 ```yaml
-name: Flow Name
-description: What this flow tests
+name: User Registration Flow
+description: Create and verify a new user
 tags:
+  - users
   - smoke
-  - e2e
 
 steps:
-  - name: Step Name
+  - name: Create user
     request:
       method: POST
-      url: "{api}/endpoint"
+      url: "{api}/users"
       headers:
         Content-Type: application/json
       body:
-        key: value
+        email: alice@example.com
+        name: Alice
     capture:
-      - name: variableName
-        path: data.field
+      - name: userId
+        path: data.id
     assertions:
       - path: status
         operator: equals
         value: 201
-```
+      - path: data.email
+        operator: equals
+        value: alice@example.com
 
-### REST requests
-
-```yaml
-steps:
-  - name: Create resource
+  - name: Verify user
     request:
-      method: POST
-      url: "{api}/resources"
-      headers:
-        Content-Type: application/json
-        Authorization: "Bearer ${token}"
-      body:
-        title: New Resource
-        active: true
+      method: GET
+      url: "{api}/users/${userId}"
+    assertions:
+      - path: data.id
+        operator: equals
+        value: "${userId}"
 ```
 
 ### GraphQL requests
 
 ```yaml
 steps:
-  - name: Query users
+  - name: Query user
     request:
       method: POST
       url: "{graphql}"
@@ -227,7 +340,7 @@ steps:
         variables:
           id: "${userId}"
     capture:
-      - name: email
+      - name: userEmail
         path: data.user.email
 ```
 
@@ -258,18 +371,19 @@ steps:
         Authorization: "Bearer ${token}"
 ```
 
-Supported interpolation patterns:
+**Supported patterns:**
+
 - `${variable}` — simple variable
 - `${data.nested.field}` — nested path
 - `${items[0].id}` — array access
 
-### Polling (waitUntil)
+### Async polling (waitUntil)
 
-For async operations — polls until a condition is met or timeout:
+For operations that take time — polls until condition is met or timeout:
 
 ```yaml
 steps:
-  - name: Wait for processing
+  - name: Wait for job completion
     request:
       method: GET
       url: "{api}/jobs/${jobId}"
@@ -287,22 +401,26 @@ steps:
 
 ---
 
-## Assertions
+## ✅ Assertions
 
-| Operator | Description | Example value |
-|----------|-------------|---------------|
-| `equals` | Exact match (deep equality) | `200` |
-| `notEquals` | Not equal | `null` |
-| `contains` | String/array contains | `"success"` |
-| `notContains` | Does not contain | `"error"` |
+<div align="center">
+
+| Operator | Description | Example |
+|:--------:|:-----------:|:-------:|
+| `equals` | Exact match (deep equality) | `value: 200` |
+| `notEquals` | Not equal | `value: null` |
+| `contains` | String/array contains | `value: "success"` |
+| `notContains` | Does not contain | `value: "error"` |
 | `exists` | Not null/undefined | — |
 | `notExists` | Is null/undefined | — |
-| `greaterThan` | Number comparison | `0` |
-| `lessThan` | Number comparison | `100` |
-| `matches` | Regex match | `"^[a-z]+$"` |
-| `ai-evaluate` | AI-powered evaluation | `"Is this a valid user?"` |
+| `greaterThan` | Number comparison | `value: 0` |
+| `lessThan` | Number comparison | `value: 100` |
+| `matches` | Regex match | `value: "^[a-z]+$"` |
+| `ai-evaluate` | AI-powered evaluation | `value: "Is this valid?"` |
 
-### Special paths
+</div>
+
+**Special paths:**
 
 - `status` — HTTP status code (when value is a number)
 - `httpStatus` — always the HTTP status code
@@ -311,11 +429,23 @@ steps:
 
 ---
 
-## AI-Powered Evaluation
+## 🤖 AI-Powered Evaluation
 
-Use a local LLM to assert things that are hard to express with traditional operators.
+Use AI to assert things that are hard to express with traditional operators. **testflow-ai** supports multiple providers:
 
-### Setup Ollama
+<div align="center">
+
+| Provider | Type | Setup | Best For |
+|:--------:|:----:|:-----:|:--------:|
+| **🦙 Ollama** | Local | Free, no API key | Privacy, offline, cost-effective |
+| **🤖 OpenAI** | Cloud | API key required | High accuracy, GPT-4 |
+| **🧠 Anthropic** | Cloud | API key required | Claude models, safety-focused |
+
+</div>
+
+### 🦙 Ollama (Local, Recommended)
+
+**No cloud API keys, no data leaves your machine.**
 
 1. **Install Ollama** — [ollama.com/download](https://ollama.com/download)
 
@@ -332,17 +462,82 @@ ollama pull llama3.2:1b
 ollama pull mistral:7b
 ```
 
-3. **Start Ollama** (runs on `http://localhost:11434` by default):
+1. **Start Ollama** (runs on `http://localhost:11434` by default):
 
 ```bash
 ollama serve
 ```
 
+**Usage:**
+
+```bash
+# CLI
+npx testflow --dir ./tests --ai-provider ollama --ai-model llama3.2:3b
+
+# Programmatic
+const report = await runTests({
+  testDir: './tests',
+  ai: {
+    provider: 'ollama',
+    url: 'http://localhost:11434',
+    model: 'llama3.2:3b',
+  },
+});
+```
+
+### 🤖 OpenAI (Cloud)
+
+**Requires API key from [platform.openai.com](https://platform.openai.com/api-keys)**
+
+```bash
+# CLI
+npx testflow --dir ./tests \
+  --ai-provider openai \
+  --ai-key $OPENAI_API_KEY \
+  --ai-model gpt-4o-mini
+
+# Programmatic
+const report = await runTests({
+  testDir: './tests',
+  ai: {
+    provider: 'openai',
+    apiKey: process.env.OPENAI_API_KEY,
+    model: 'gpt-4o-mini',
+  },
+});
+```
+
+**Supported models:** `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`, `gpt-3.5-turbo`
+
+### 🧠 Anthropic (Cloud)
+
+**Requires API key from [console.anthropic.com](https://console.anthropic.com/)**
+
+```bash
+# CLI
+npx testflow --dir ./tests \
+  --ai-provider anthropic \
+  --ai-key $ANTHROPIC_API_KEY \
+  --ai-model claude-3-haiku-20240307
+
+# Programmatic
+const report = await runTests({
+  testDir: './tests',
+  ai: {
+    provider: 'anthropic',
+    apiKey: process.env.ANTHROPIC_API_KEY,
+    model: 'claude-3-haiku-20240307',
+  },
+});
+```
+
+**Supported models:** `claude-3-5-sonnet-20241022`, `claude-3-opus-20240229`, `claude-3-haiku-20240307`
+
 ### Using AI assertions
 
 ```yaml
 steps:
-  - name: Check response quality
+  - name: Check article quality
     request:
       method: GET
       url: "{api}/articles/1"
@@ -351,45 +546,31 @@ steps:
       - path: status
         operator: equals
         value: 200
-      # AI-powered assertion
+      # AI-powered assertion (works with any provider)
       - path: data.content
         operator: ai-evaluate
         value: "Does this article contain a coherent explanation with at least two paragraphs?"
-```
-
-### CLI with AI
-
-```bash
-testflow --dir ./tests --ai-model llama3.2:3b
-testflow --dir ./tests --ai-url http://192.168.1.10:11434 --ai-model mistral:7b
-```
-
-### Programmatic with AI
-
-```typescript
-const report = await runTests({
-  testDir: './tests',
-  ai: {
-    url: 'http://localhost:11434',
-    model: 'llama3.2:3b',
-    timeout: 30000,
-  },
-});
 ```
 
 ### Context file AI config
 
 ```markdown
 ## AI Configuration
+- provider: ollama
 - url: http://localhost:11434
 - model: llama3.2:3b
+
+# Or for cloud providers:
+# provider: openai
+# apiKey: ${OPENAI_API_KEY}
+# model: gpt-4o-mini
 ```
 
-> AI evaluation requires Ollama running locally. No cloud API keys, no data leaves your machine.
+> **🔒 Privacy note:** Ollama runs entirely locally. OpenAI and Anthropic send data to their APIs. Choose based on your privacy requirements.
 
 ---
 
-## Context Files
+## 📄 Context Files
 
 Define your project context in Markdown. The runner uses it to resolve `{baseUrlKey}` references in your YAML flows.
 
@@ -413,13 +594,14 @@ Brief description of your API.
 - Authentication required for /users
 
 ## AI Configuration
+- provider: ollama
 - url: http://localhost:11434
 - model: llama3.2:3b
 ```
 
 ---
 
-## CI/CD Integration
+## 🔄 CI/CD Integration
 
 ### GitHub Actions
 
@@ -441,16 +623,16 @@ jobs:
           path: results.json
 ```
 
-### Exit codes
+**Exit codes:**
 
 - `0` — all flows passed
 - `1` — one or more flows failed
 
 ---
 
-## Output Examples
+## 📊 Output Examples
 
-### Console
+### Console Output
 
 ```
 ══════════════════════════════════════════════════════════════
@@ -458,10 +640,10 @@ jobs:
 ══════════════════════════════════════════════════════════════
 
 Summary:
-  Total:    3 flows
-  Passed:  2
-  Failed:  1
-  Duration: 542ms
+  Total:    5 flows
+  Passed:  5
+  Failed:  0
+  Duration: 2450ms
 
 Narrative:
 
@@ -485,7 +667,7 @@ Narrative:
 
 ---
 
-## Roadmap
+## 🗺️ Roadmap
 
 - [ ] Database assertions (verify records directly via SQL)
 - [ ] gRPC / RPC support
@@ -497,6 +679,44 @@ Narrative:
 
 ---
 
-## License
+## 📚 Examples
+
+See the [`examples/`](./examples) directory for:
+
+- REST CRUD flows
+- GraphQL queries and mutations
+- Authentication flows
+- Context file templates
+
+---
+
+## 📄 License
 
 MIT
+
+---
+
+<div align="center">
+
+**Made with ❤️ by [Marcos Carbajal](https://github.com/carbajalmarcos)**
+
+[⭐ Star on GitHub](https://github.com/carbajalmarcos/testflow-ai) • [📦 npm](https://www.npmjs.com/package/testflow-ai) • [🐛 Report Bug](https://github.com/carbajalmarcos/testflow-ai/issues) • [💬 Discussions](https://github.com/carbajalmarcos/testflow-ai/discussions)
+
+---
+
+### ☕ Support this project
+
+If you find **testflow-ai** useful, consider supporting its development:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/carbajalmarcos)
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-ea4aaa?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sponsors/carbajalmarcos)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/carbajalmarcos)
+
+**Crypto donations:**
+
+- **Bitcoin (BTC):** `bc1qv0ddjg3wcgujk9ad66v9msz8manu5tanhvq0fn`
+- **ERC-20 USDT:** `0x79F57C9D45d2D40420EF071DDAaA27057618E7C8`
+
+*Every contribution helps make this project better!*
+
+</div>

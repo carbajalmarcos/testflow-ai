@@ -26,8 +26,10 @@ program
     .option('-t, --tags <tags>', 'Comma-separated tags to filter')
     .option('-f, --format <format>', 'Output: console, json, markdown', 'console')
     .option('-v, --verbose', 'Verbose output')
-    .option('--ai-url <url>', 'Ollama URL (default: http://localhost:11434)')
-    .option('--ai-model <model>', 'Ollama model (default: llama3.2:3b)')
+    .option('--ai-provider <provider>', 'AI provider: ollama, openai, anthropic (default: ollama)')
+    .option('--ai-url <url>', 'AI API URL (for Ollama, default: http://localhost:11434)')
+    .option('--ai-model <model>', 'AI model name (varies by provider)')
+    .option('--ai-key <key>', 'API key (required for OpenAI/Anthropic)')
     .action(async (files: string[], opts) => {
         try {
             const report = await runTests({
@@ -37,8 +39,13 @@ program
                 tags: opts.tags?.split(','),
                 format: opts.format,
                 verbose: opts.verbose,
-                ai: opts.aiUrl || opts.aiModel
-                    ? { url: opts.aiUrl, model: opts.aiModel }
+                ai: opts.aiProvider || opts.aiUrl || opts.aiModel || opts.aiKey
+                    ? {
+                        provider: opts.aiProvider || 'ollama',
+                        url: opts.aiUrl,
+                        model: opts.aiModel,
+                        apiKey: opts.aiKey,
+                    }
                     : undefined,
             });
 

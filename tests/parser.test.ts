@@ -175,6 +175,7 @@ A sample REST API.
 `);
 
     expect(ctx.ai).toEqual({
+      provider: 'ollama',
       url: 'http://localhost:11434',
       model: 'mistral:7b',
     });

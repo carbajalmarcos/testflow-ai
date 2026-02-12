@@ -149,11 +149,16 @@ function parseList(content: string): string[] {
 function parseAiConfig(content: string): ProjectContext['ai'] {
   if (!content) return undefined;
   const kv = parseKeyValues(content);
-  if (!kv['url'] && !kv['model']) return undefined;
-  return {
+  if (!kv['url'] && !kv['model'] && !kv['provider']) return undefined;
+  const config: NonNullable<ProjectContext['ai']> = {
+    provider: (kv['provider'] as 'ollama' | 'openai' | 'anthropic') || 'ollama',
     url: kv['url'] || 'http://localhost:11434',
     model: kv['model'] || 'llama3.2:3b',
   };
+  if (kv['apiKey'] || kv['api_key']) {
+    config.apiKey = kv['apiKey'] || kv['api_key'];
+  }
+  return config;
 }
 
 // -- File discovery --

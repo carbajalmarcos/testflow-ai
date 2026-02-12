@@ -24,8 +24,10 @@ export interface EndpointDefinition {
 
 /** AI configuration from the context file. */
 export interface AiContextConfig {
-  url: string;
-  model: string;
+  provider?: AiProvider;
+  url?: string;
+  apiKey?: string;
+  model?: string;
 }
 
 // -- Test flows --
@@ -150,14 +152,21 @@ export interface TestReport {
 
 // -- AI --
 
+/** AI provider type. */
+export type AiProvider = 'ollama' | 'openai' | 'anthropic';
+
 /** AI evaluator configuration. */
 export interface AiConfig {
-  /** Ollama API URL (default: `http://localhost:11434`). */
-  url: string;
-  /** Model name (default: `llama3.2:3b`). */
-  model: string;
+  /** AI provider (default: `ollama`). */
+  provider?: AiProvider;
+  /** API URL (for Ollama, default: `http://localhost:11434`). */
+  url?: string;
+  /** API key (required for OpenAI and Anthropic). */
+  apiKey?: string;
+  /** Model name (default varies by provider). */
+  model?: string;
   /** Request timeout in ms (default: 30 000). */
-  timeout: number;
+  timeout?: number;
 }
 
 /** Result returned by the AI evaluator. */
