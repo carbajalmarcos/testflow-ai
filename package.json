@@ -1,70 +1,71 @@
 {
-  "name": "testflow-ai",
-  "version": "0.3.0",
-  "description": "Declarative API testing powered by YAML flows. Replace Postman with version-controlled, AI-friendly test definitions.",
-  "author": "Marcos Carbajal",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/carbajalmarcos/testflow-ai"
-  },
-  "homepage": "https://github.com/carbajalmarcos/testflow-ai#readme",
-  "bugs": {
-    "url": "https://github.com/carbajalmarcos/testflow-ai/issues"
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+    "name": "testflow-ai",
+    "version": "0.3.0",
+    "description": "Declarative API testing powered by YAML flows. Replace Postman with version-controlled, AI-friendly test definitions.",
+    "author": "Marcos Carbajal",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/carbajalmarcos/testflow-ai"
+    },
+    "homepage": "https://github.com/carbajalmarcos/testflow-ai#readme",
+    "bugs": {
+        "url": "https://github.com/carbajalmarcos/testflow-ai/issues"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
+    "bin": {
+        "testflow": "./dist/cli.js",
+        "tflow": "./dist/cli.js"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE",
+        "examples"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "lint": "tsc --noEmit",
+        "clean": "rm -rf dist",
+        "prepublishOnly": "npm run build"
+    },
+    "keywords": [
+        "testing",
+        "api-testing",
+        "declarative",
+        "yaml",
+        "e2e",
+        "integration",
+        "graphql",
+        "rest",
+        "http",
+        "ai",
+        "ollama",
+        "flow",
+        "ci-cd",
+        "test-automation"
+    ],
+    "dependencies": {
+        "axios": "^1.7.0",
+        "commander": "^12.1.0",
+        "glob": "^11.0.0",
+        "yaml": "^2.4.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "typescript": "^5.7.0",
+        "vitest": "^2.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
     }
-  },
-  "bin": {
-    "testflow": "./dist/cli.js",
-    "tflow": "./dist/cli.js"
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "lint": "tsc --noEmit",
-    "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build"
-  },
-  "keywords": [
-    "testing",
-    "api-testing",
-    "declarative",
-    "yaml",
-    "e2e",
-    "integration",
-    "graphql",
-    "rest",
-    "http",
-    "ai",
-    "ollama",
-    "flow",
-    "ci-cd",
-    "test-automation"
-  ],
-  "dependencies": {
-    "axios": "^1.7.0",
-    "commander": "^12.1.0",
-    "glob": "^11.0.0",
-    "yaml": "^2.4.0"
-  },
-  "devDependencies": {
-    "@types/node": "^22.0.0",
-    "typescript": "^5.7.0",
-    "vitest": "^2.0.0"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  }
 }

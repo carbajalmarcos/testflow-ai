@@ -25,10 +25,9 @@
 
 **testflow-ai** lets you describe API scenarios in YAML files, run them from the command line or as a library, and (optionally) ask an AI model to judge complex responses. No GUI, no vendor lock‑in, and it works with any HTTP/GraphQL API.
 
-> **💡 Origin story (side projects & frustration):**  
-> While hacking on side projects and small backends, I ended up with **dozens of endpoints**: auth, users, tasks, webhooks, background jobs…  
-> I was jumping between Postman collections, ad‑hoc scripts, and "please hit these endpoints" prompts to AI agents. I wanted something that felt more like a **test agent**:  
-> a tool that could **create data, mutate it, delete it, and walk full flows end‑to‑end**, but defined in plain files, close to the code, and easy to run in CI.  
+> **💡 Born from real-world frustration:**  
+> After days of testing APIs with Postman and burning tokens with ChatGPT, I built this to centralize tests in version-controlled YAML files with local AI support.  
+> I wanted something that felt more like a **test agent**: a tool that could **create data, mutate it, delete it, and walk full flows end‑to‑end**, but defined in plain files, close to the code, and easy to run in CI.  
 > **testflow-ai** is that tool: a thin engine that turns YAML flows into real HTTP calls, variable captures, assertions, and (if you want) AI‑powered checks.
 
 ---
@@ -108,6 +107,8 @@ npm i -D testflow-ai
 **Create `context.md`:**
 
 ```markdown
+# My API
+
 ## Base URLs
 - api: http://localhost:3000
 ```
@@ -123,7 +124,11 @@ steps:
     request:
       method: POST
       url: "{api}/todos"
-      body: { title: "Buy milk", completed: false }
+      headers:
+        Content-Type: application/json
+      body:
+        title: "Buy milk"
+        completed: false
     capture:
       - name: todoId
         path: data.id
@@ -679,18 +684,25 @@ ai: {
 
 ---
 
-## 🔒 Security & secrets
+<details>
+<summary><b>🔒 Security & secrets</b> (click to expand)</summary>
 
 - **Avoid committing API keys.** Use environment variables (e.g. `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`).
-- The runner **should redact** common secret fields in logs (Authorization headers, tokens, cookies).
+- The runner **redacts** common secret fields in logs (Authorization headers, tokens, cookies) when verbose mode is enabled.
 - Keep sensitive data out of YAML files — use environment variable interpolation or context files with `.gitignore`.
 
-Example:
+**Example:**
 
 ```yaml
 headers:
   Authorization: "Bearer ${API_TOKEN}"  # Use env vars
 ```
+
+**Best practices:**
+
+- Store secrets in `.env` files (add to `.gitignore`)
+- Use context files for non-sensitive config (base URLs, endpoints)
+- Never commit API keys or tokens in YAML files
 
 </details>
 
@@ -720,7 +732,7 @@ This gives you:
 - ✅ Validation for required fields and types
 - ✅ Hover documentation for operators and options
 
-> **Note:** Schema file coming soon. For now, TypeScript types are available via `import type { TestFlow } from 'testflow-ai'`.
+> **Note:** JSON Schema coming in a future release. For now, TypeScript types provide autocomplete via `import type { TestFlow } from 'testflow-ai'`.
 
 </details>
 
@@ -861,10 +873,10 @@ See the [`examples/`](./examples) directory for:
 **Quick start with examples:**
 
 ```bash
-# Run todo list examples
-npx testflow --dir ./examples --context ./examples/todo-list-context.md todo-crud.yaml
+# Run specific example
+npx testflow --context ./examples/todo-list-context.md ./examples/todo-crud.yaml
 
-# Run all examples
+# Run all examples in directory
 npx testflow --dir ./examples --context ./examples/context.md
 ```
 
