@@ -4,15 +4,15 @@
 
 **YAML API flows + optional LLM assertions (local Ollama or cloud)**
 
-*Version-controlled • CI-friendly • Human-readable*
+*Version-controlled • CI-friendly • Agent-friendly*
 
 [![npm version](https://img.shields.io/npm/v/testflow-ai.svg?style=for-the-badge&color=blue)](https://www.npmjs.com/package/testflow-ai)
-[![npm downloads](https://img.shields.io/npm/dm/testflow-ai.svg?style=for-the-badge&color=green)](https://www.npmjs.com/package/testflow-ai)
+[![npm downloads](https://img.shields.io/npm/dt/testflow-ai.svg?style=for-the-badge&color=green&label=downloads)](https://www.npmjs.com/package/testflow-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-green.svg?style=for-the-badge)](https://nodejs.org)
 
 ✅ **Multi-step flows** (create → capture → reuse → assert)  
-🤖 **Assert "hard" responses with AI** (privacy-first via Ollama)  
+🤖 **Assert nuanced responses with AI** (privacy-first via Ollama)  
 📄 **Keep API context in Markdown** (great for humans + AI agents)
 
 [📖 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [💻 Examples](#-real-world-example) • [🤖 AI Providers](#-ai-powered-evaluation)
@@ -903,7 +903,9 @@ If you find **testflow-ai** useful, consider supporting its development:
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/carbajalmarcos)
 
 **Crypto donations:**
+
 **Bitcoin (BTC):** `bc1qv0ddjg3wcgujk9ad66v9msz8manu5tanhvq0fn`
+
 **ERC-20 USDT:** `0x79F57C9D45d2D40420EF071DDAaA27057618E7C8`
 
 *Every contribution helps make this project better!*
