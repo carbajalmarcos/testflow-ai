@@ -1,9 +1,10 @@
-# Auth flow — Login, use token, access protected resource.
+# Auth flow — Login, use token, create and access a protected todo.
 
-name: Authentication Flow
-description: Login and access a protected endpoint using the returned token
+name: Authenticated Todo Flow
+description: Login, create a todo with auth token, and verify access control
 tags:
   - auth
+  - todos
   - smoke
 
 steps:
@@ -19,8 +20,6 @@ steps:
     capture:
       - name: token
         path: data.accessToken
-      - name: userId
-        path: data.user.id
     assertions:
       - path: status
         operator: equals
@@ -28,10 +27,31 @@ steps:
       - path: data.accessToken
         operator: exists
 
-  - name: Access protected route
+  - name: Create todo (authenticated)
+    request:
+      method: POST
+      url: "{api}/todos"
+      headers:
+        Content-Type: application/json
+        Authorization: "Bearer ${token}"
+      body:
+        title: "Deploy to production"
+        completed: false
+    capture:
+      - name: todoId
+        path: data.id
+    assertions:
+      - path: status
+        operator: equals
+        value: 201
+      - path: data.title
+        operator: equals
+        value: "Deploy to production"
+
+  - name: Read todo (authenticated)
     request:
       method: GET
-      url: "{api}/users/${userId}"
+      url: "{api}/todos/${todoId}"
       headers:
         Authorization: "Bearer ${token}"
     assertions:
@@ -40,12 +60,16 @@ steps:
         value: 200
       - path: data.id
         operator: equals
-        value: "${userId}"
+        value: "${todoId}"
 
   - name: Reject without token
     request:
-      method: GET
-      url: "{api}/users/${userId}"
+      method: POST
+      url: "{api}/todos"
+      headers:
+        Content-Type: application/json
+      body:
+        title: "Should fail"
     assertions:
       - path: status
         operator: equals

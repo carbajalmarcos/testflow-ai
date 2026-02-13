@@ -1,76 +1,77 @@
-# REST CRUD — Create, read, update, verify a user.
+# REST CRUD — Create, read, update, verify a todo item.
 
-name: User CRUD
-description: Full lifecycle test for a REST user resource
+name: Todo REST CRUD
+description: Full lifecycle test for a REST todo resource
 tags:
-  - users
+  - todos
   - crud
   - smoke
 
 steps:
-  - name: Create user
+  - name: Create todo
     request:
       method: POST
-      url: "{api}/users"
+      url: "{api}/todos"
       headers:
         Content-Type: application/json
       body:
-        email: alice@example.com
-        name: Alice
+        title: "Write unit tests"
+        completed: false
     capture:
-      - name: userId
+      - name: todoId
         path: data.id
-      - name: userEmail
-        path: data.email
+      - name: todoTitle
+        path: data.title
     assertions:
       - path: status
         operator: equals
         value: 201
-      - path: data.email
+      - path: data.title
         operator: equals
-        value: alice@example.com
+        value: "Write unit tests"
       - path: data.id
         operator: exists
 
-  - name: Read user
+  - name: Read todo
     request:
       method: GET
-      url: "{api}/users/${userId}"
+      url: "{api}/todos/${todoId}"
     assertions:
       - path: status
         operator: equals
         value: 200
       - path: data.id
         operator: equals
-        value: "${userId}"
-      - path: data.email
+        value: "${todoId}"
+      - path: data.title
         operator: equals
-        value: "${userEmail}"
+        value: "${todoTitle}"
 
-  - name: Update user
+  - name: Update todo
     request:
       method: PUT
-      url: "{api}/users/${userId}"
+      url: "{api}/todos/${todoId}"
       headers:
         Content-Type: application/json
       body:
-        name: Alice Updated
+        title: "Write unit tests (done)"
+        completed: true
     assertions:
       - path: status
         operator: equals
         value: 200
-      - path: data.name
+      - path: data.title
         operator: equals
-        value: Alice Updated
+        value: "Write unit tests (done)"
 
   - name: Verify update
     request:
       method: GET
-      url: "{api}/users/${userId}"
+      url: "{api}/todos/${todoId}"
     assertions:
-      - path: data.name
+      - path: data.title
         operator: equals
-        value: Alice Updated
-      - path: data.email
+        value: "Write unit tests (done)"
+      - path: data.completed
         operator: equals
-        value: "${userEmail}"
+        value: true

@@ -1,58 +1,58 @@
-# GraphQL — Mutation + query with variable capture.
+# GraphQL — Mutation + query with variable capture for todos.
 
-name: GraphQL User Flow
-description: Create a user via mutation, then query it back
+name: GraphQL Todo Flow
+description: Create a todo via mutation, then query it back
 tags:
   - graphql
-  - users
+  - todos
 
 steps:
-  - name: Create user (mutation)
+  - name: Create todo (mutation)
     request:
       method: POST
       url: "{graphql}"
       graphql:
         query: |
-          mutation CreateUser($input: CreateUserInput!) {
-            createUser(input: $input) {
+          mutation CreateTodo($input: CreateTodoInput!) {
+            createTodo(input: $input) {
               id
-              email
-              name
+              title
+              completed
             }
           }
         variables:
           input:
-            email: bob@example.com
-            name: Bob
+            title: "Learn GraphQL"
+            completed: false
     capture:
-      - name: userId
-        path: data.createUser.id
+      - name: todoId
+        path: data.createTodo.id
     assertions:
-      - path: data.createUser.email
+      - path: data.createTodo.title
         operator: equals
-        value: bob@example.com
-      - path: data.createUser.id
+        value: "Learn GraphQL"
+      - path: data.createTodo.id
         operator: exists
 
-  - name: Query user
+  - name: Query todo
     request:
       method: POST
       url: "{graphql}"
       graphql:
         query: |
-          query GetUser($id: ID!) {
-            user(id: $id) {
+          query GetTodo($id: ID!) {
+            todo(id: $id) {
               id
-              email
-              name
+              title
+              completed
             }
           }
         variables:
-          id: "${userId}"
+          id: "${todoId}"
     assertions:
-      - path: data.user.id
+      - path: data.todo.id
         operator: equals
-        value: "${userId}"
-      - path: data.user.email
+        value: "${todoId}"
+      - path: data.todo.title
         operator: equals
-        value: bob@example.com
+        value: "Learn GraphQL"

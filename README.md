@@ -4,16 +4,16 @@
 
 **YAML API flows + optional LLM assertions (local Ollama or cloud)**
 
-*Version-controlled • CI-friendly • Agent-friendly*
+*Version-controlled • CI/CD-ready • Human-readable*
 
 [![npm version](https://img.shields.io/npm/v/testflow-ai.svg?style=for-the-badge&color=blue)](https://www.npmjs.com/package/testflow-ai)
-[![npm downloads](https://img.shields.io/npm/dt/testflow-ai.svg?style=for-the-badge&color=green&label=downloads)](https://www.npmjs.com/package/testflow-ai)
+[![npm downloads](https://img.shields.io/npm/dm/testflow-ai.svg?style=for-the-badge&color=green)](https://www.npmjs.com/package/testflow-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-green.svg?style=for-the-badge)](https://nodejs.org)
 
 ✅ **Multi-step flows** (create → capture → reuse → assert)  
-🤖 **Validate complex responses with AI** (privacy-first via Ollama)  
-📄 **Keep API context in Markdown** (great for humans & agents)
+🤖 **Assert "hard" responses with AI** (privacy-first via Ollama)  
+📄 **Keep API context in Markdown** (great for humans + AI agents)
 
 [📖 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [💻 Examples](#-real-world-example) • [🤖 AI Providers](#-ai-powered-evaluation)
 
@@ -234,9 +234,8 @@ my-api/
 │   ├── index.ts              # Test runner
 │   ├── context.md            # API context
 │   └── flows/
-│       ├── health-check.yaml
 │       ├── todo-crud.yaml
-│       └── todo-complete-flow.yaml
+│       └── todo-graphql.yaml
 └── package.json
 ```
 
@@ -352,14 +351,14 @@ import { TestRunner, FlowExecutor, parseYamlFile, parseContextFile } from 'testf
 // Runner with full control
 const runner = new TestRunner({
   contextFile: './context.md',
-  testFiles: ['./tests/critical.yaml'],
+  testFiles: ['./tests/todo-crud.yaml'],
   ai: { provider: 'ollama', model: 'mistral:7b' },
 });
 const report = await runner.run();
 
 // Manual execution
 const context = await parseContextFile('./context.md');
-const flow = await parseYamlFile('./tests/flow.yaml');
+const flow = await parseYamlFile('./tests/todo-crud.yaml');
 const executor = new FlowExecutor(context, true);
 const result = await executor.executeFlow(flow);
 ```
@@ -374,65 +373,65 @@ const result = await executor.executeFlow(flow);
 ### Basic structure
 
 ```yaml
-name: User Registration Flow
-description: Create and verify a new user
+name: Todo Lifecycle
+description: Create a todo and verify it exists
 tags:
-  - users
+  - todos
   - smoke
 
 steps:
-  - name: Create user
+  - name: Create todo
     request:
       method: POST
-      url: "{api}/users"
+      url: "{api}/todos"
       headers:
         Content-Type: application/json
       body:
-        email: alice@example.com
-        name: Alice
+        title: "Buy groceries"
+        completed: false
     capture:
-      - name: userId
+      - name: todoId
         path: data.id
     assertions:
       - path: status
         operator: equals
         value: 201
-      - path: data.email
+      - path: data.title
         operator: equals
-        value: alice@example.com
+        value: "Buy groceries"
 
-  - name: Verify user
+  - name: Verify todo
     request:
       method: GET
-      url: "{api}/users/${userId}"
+      url: "{api}/todos/${todoId}"
     assertions:
       - path: data.id
         operator: equals
-        value: "${userId}"
+        value: "${todoId}"
 ```
 
 ### GraphQL requests
 
 ```yaml
 steps:
-  - name: Query user
+  - name: Query todo
     request:
       method: POST
       url: "{graphql}"
       graphql:
         query: |
-          query GetUser($id: ID!) {
-            user(id: $id) {
+          query GetTodo($id: ID!) {
+            todo(id: $id) {
               id
-              email
-              name
+              title
+              completed
             }
           }
         variables:
-          id: "${userId}"
+          id: "${todoId}"
     capture:
-      - name: userEmail
-        path: data.user.email
+      - name: todoTitle
+        path: data.todo.title
 ```
 
 ### Variable capture and interpolation
@@ -441,25 +440,29 @@ Variables captured in one step are available in all subsequent steps:
 
 ```yaml
 steps:
-  - name: Login
+  - name: Create todo
     request:
       method: POST
-      url: "{api}/auth/login"
+      url: "{api}/todos"
+      headers:
+        Content-Type: application/json
       body:
-        email: admin@example.com
-        password: secret
+        title: "Read docs"
+        completed: false
     capture:
-      - name: token
-        path: data.accessToken
-      - name: userId
-        path: data.user.id
+      - name: todoId
+        path: data.id
+      - name: todoTitle
+        path: data.title
 
-  - name: Get profile
+  - name: Verify todo title
     request:
       method: GET
-      url: "{api}/users/${userId}"
-      headers:
-        Authorization: "Bearer ${token}"
+      url: "{api}/todos/${todoId}"
+    assertions:
+      - path: data.title
+        operator: equals
+        value: "${todoTitle}"
 ```
 
 **Supported patterns:**
@@ -474,20 +477,20 @@ For operations that take time — polls until condition is met or timeout:
 
 ```yaml
 steps:
-  - name: Wait for job completion
+  - name: Wait for todo sync
     request:
       method: GET
-      url: "{api}/jobs/${jobId}"
+      url: "{api}/todos/${todoId}/sync-status"
     waitUntil:
       path: data.status
       operator: equals
-      value: "COMPLETED"
+      value: "SYNCED"
       timeout: 30000    # max wait (ms)
       interval: 2000    # poll every (ms)
     assertions:
       - path: data.status
         operator: equals
-        value: "COMPLETED"
+        value: "SYNCED"
 ```
 
 </details>
@@ -633,19 +636,19 @@ const report = await runTests({
 
 ```yaml
 steps:
-  - name: Check article quality
+  - name: Check todo description
     request:
       method: GET
-      url: "{api}/articles/1"
+      url: "{api}/todos/${todoId}"
     assertions:
       # Traditional assertion
       - path: status
         operator: equals
         value: 200
       # AI-powered assertion (works with any provider)
-      - path: data.content
+      - path: data.description
         operator: ai-evaluate
-        value: "Does this article contain a coherent explanation with at least two paragraphs?"
+        value: "Is this a well-formed task description with a clear action item?"
 ```
 
 ### Context file AI config
@@ -744,23 +747,25 @@ This gives you:
 Define your project context in Markdown. The runner uses it to resolve `{baseUrlKey}` references in your YAML flows.
 
 ```markdown
-# My API
+# Todo List API
 
 ## Description
-Brief description of your API.
+A REST + GraphQL API for managing todo items.
 
 ## Base URLs
 - api: http://localhost:3000
 - graphql: http://localhost:3000/graphql
 
 ## Endpoints
-- POST /users - Create user
-- GET /users/:id - Get user
+- POST /todos - Create todo
+- GET /todos/:id - Get todo by ID
+- PUT /todos/:id - Update todo
+- DELETE /todos/:id - Delete todo
 - POST /graphql - GraphQL endpoint
 
 ## Rules
 - All endpoints return JSON
-- Authentication required for /users
+- Todos have: id, title, completed, createdAt
 
 ## AI Configuration
 - provider: ollama
@@ -815,26 +820,27 @@ That's it. If tests fail, the job fails automatically (exit code 1).
 ══════════════════════════════════════════════════════════════
 
 Summary:
-  Total:    5 flows
-  Passed:  5
-  Failed:  0
-  Duration: 2450ms
+  Total:    3 flows
+  Passed:  2
+  Failed:  1
+  Duration: 1850ms
 
 Narrative:
 
-✅ **User CRUD**
-   → Create user
-     📦 userId: abc-123
-   → Read user
-   → Update user
+✅ **Todo CRUD**
+   → Create todo
+     📦 todoId: abc-123
+   → Read todo
+   → Update todo
+   → Delete todo
 
-✅ **Auth Flow**
-   → Login
-     📦 token: eyJhbG…
-   → Access protected route
+✅ **Todo GraphQL**
+   → Create todo (mutation)
+     📦 todoId: def-456
+   → Query todo
 
-❌ **Payment Flow**
-   ✗ Create payment
+❌ **Todo Bulk Import**
+   ✗ Import todos from CSV
      ⚠️  Expected status to equal 200, got 500
 
 ══════════════════════════════════════════════════════════════
@@ -863,48 +869,53 @@ Narrative:
 
 See the [`examples/`](./examples) directory for:
 
-- **Todo List CRUD** (`todo-crud.yaml`) - Complete REST CRUD flow
-- **Todo GraphQL** (`todo-graphql.yaml`) - GraphQL mutations and queries
-- **REST CRUD** (`rest-crud.yaml`) - User management example
-- **GraphQL Flow** (`graphql-flow.yaml`) - GraphQL with variable capture
-- **Auth Flow** (`auth-flow.yaml`) - Authentication and protected routes
-- **Context Files** (`context.md`, `todo-list-context.md`) - API context templates
+- **REST CRUD** (`rest-crud.yaml`) — Full todo lifecycle: create → read → update → verify
+- **Auth Flow** (`auth-flow.yaml`) — Login, create todo with token, verify access control
+- **GraphQL Flow** (`graphql-flow.yaml`) — Create + query todos via GraphQL mutations
+- **Todo CRUD** (`todo-crud.yaml`) — Extended CRUD with delete + verify deletion
+- **Todo GraphQL** (`todo-graphql.yaml`) — GraphQL mutations and queries with variable capture
+- **Context Files** (`context.md`, `todo-list-context.md`) — API context templates
 
 **Quick start with examples:**
 
 ```bash
-# Run specific example
-npx testflow --context ./examples/todo-list-context.md ./examples/todo-crud.yaml
+# Run a specific flow
+npx testflow --context ./examples/context.md ./examples/rest-crud.yaml
 
-# Run all examples in directory
+# Run the auth flow
+npx testflow --context ./examples/context.md ./examples/auth-flow.yaml
+
+# Run all examples
 npx testflow --dir ./examples --context ./examples/context.md
 ```
+
+---
+
+## 📄 License
+
+MIT
+
+---
 
 <div align="center">
 
 **Made with ❤️ by [Marcos Carbajal](https://github.com/carbajalmarcos)**
 
-[⭐ Star on GitHub](https://github.com/carbajalmarcos/testflow-ai) •
-[📦 npm](https://www.npmjs.com/package/testflow-ai) •
-[🐛 Report a bug](https://github.com/carbajalmarcos/testflow-ai/issues) •
-[💬 Discussions](https://github.com/carbajalmarcos/testflow-ai/discussions)
+[⭐ Star on GitHub](https://github.com/carbajalmarcos/testflow-ai) • [📦 npm](https://www.npmjs.com/package/testflow-ai) • [🐛 Report Bug](https://github.com/carbajalmarcos/testflow-ai/issues) • [💬 Discussions](https://github.com/carbajalmarcos/testflow-ai/discussions)
 
 ---
 
-### ☕ Support
+### ☕ Support this project
 
-If **testflow-ai** saved you time, consider supporting its development:
+If you find **testflow-ai** useful, consider supporting its development:
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/carbajalmarcos)
 
-<details>
-  <summary><b>Crypto (optional)</b></summary>
+**Crypto donations:**
 
-- **Bitcoin (BTC):** `bc1qv0ddjg3wcgujk9ad66v9msz8manu5tanhvq0fn`  
-- **USDT (ERC-20):** `0x79F57C9D45d2D40420EF071DDAaA27057618E7C8`
+- **Bitcoin (BTC):** `bc1qv0ddjg3wcgujk9ad66v9msz8manu5tanhvq0fn`
+- **ERC-20 USDT:** `0x79F57C9D45d2D40420EF071DDAaA27057618E7C8`
 
-</details>
-
-<sub>Every contribution helps keep the project moving. Thank you!</sub>
+*Every contribution helps make this project better!*
 
 </div>
