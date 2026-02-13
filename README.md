@@ -1,5 +1,6 @@
 <div align="center">
-<img width="458" height="690" alt="image" src="https://github.com/user-attachments/assets/f69c6a85-fbaf-414a-9c84-854d2a1b6145" />
+
+<img width="717" height="1075" alt="testflow-ai" src="https://github.com/user-attachments/assets/01f8fb08-de30-4185-afd2-f392a61e4a1c" />
   
 # 🧪 testflow-ai
 
@@ -918,6 +919,7 @@ If **testflow-ai** saved you time, consider supporting its development:
 </details>
 
 <sub>Every contribution helps keep the project moving. Thank you!</sub>
+
 
 </div>
 
