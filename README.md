@@ -4,15 +4,15 @@
 
 **YAML API flows + optional LLM assertions (local Ollama or cloud)**
 
-*Version-controlled • CI-friendly • Agent-friendly*
+*Version-controlled • CI/CD-ready • Human-readable*
 
 [![npm version](https://img.shields.io/npm/v/testflow-ai.svg?style=for-the-badge&color=blue)](https://www.npmjs.com/package/testflow-ai)
-[![npm downloads](https://img.shields.io/npm/dt/testflow-ai.svg?style=for-the-badge&color=green&label=downloads)](https://www.npmjs.com/package/testflow-ai)
+[![npm downloads](https://img.shields.io/npm/dm/testflow-ai.svg?style=for-the-badge&color=green)](https://www.npmjs.com/package/testflow-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-green.svg?style=for-the-badge)](https://nodejs.org)
 
 ✅ **Multi-step flows** (create → capture → reuse → assert)  
-🤖 **Assert nuanced responses with AI** (privacy-first via Ollama)  
+🤖 **Assert "hard" responses with AI** (privacy-first via Ollama)  
 📄 **Keep API context in Markdown** (great for humans + AI agents)
 
 [📖 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [💻 Examples](#-real-world-example) • [🤖 AI Providers](#-ai-powered-evaluation)
@@ -49,7 +49,7 @@ Most API testing tools are either **GUI-first** (collections) or **code-first** 
 
 - You want **version-controlled API E2E flows** (not a GUI collection)
 - You need **multi-step chaining** (create → capture id → update → verify)
-- You want **CI-ready output** (console/json/markdown + exit codes)
+- You want **CI/CD-ready output** (console/json/markdown + exit codes + no external deps)
 - You sometimes need an **AI judge** for fuzzy checks (content quality, summaries, "is this coherent?")
 
 ## 🚫 When NOT to use it
@@ -68,7 +68,7 @@ Most API testing tools are either **GUI-first** (collections) or **code-first** 
 |:----:|:-----------:|
 | Human-readable flows in Git | ✅ |
 | Multi-step chaining + captures | ✅ |
-| CI-friendly outputs | ✅ |
+| CI/CD-ready (exit codes, JSON) | ✅ |
 | Optional AI-based assertions | ✅ |
 | GUI collections | ❌ (not a goal) |
 | Full code-based test suites | ❌ (use your test framework) |
@@ -775,11 +775,17 @@ Brief description of your API.
 <details>
 <summary><b>🔄 CI/CD Integration</b> (click to expand)</summary>
 
+**testflow-ai** works in any CI/CD pipeline:
+
+- Exit code `0` = success, `1` = failure (CI will fail automatically)
+- JSON output: `--format json` for parsing results
+- Tag filtering: `--tags smoke` for faster runs
+
 ### GitHub Actions
 
 ```yaml
 jobs:
-  api-tests:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -787,18 +793,12 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
+      - run: npm install -D testflow-ai
       - run: npm run start:server &
-      - run: npx testflow --dir ./tests --context ./context.md --format json > results.json
-      - uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: results.json
+      - run: npx testflow --dir ./tests --context ./context.md
 ```
 
-**Exit codes:**
-
-- `0` — all flows passed
-- `1` — one or more flows failed
+That's it. If tests fail, the job fails automatically (exit code 1).
 
 </details>
 
@@ -904,9 +904,8 @@ If you find **testflow-ai** useful, consider supporting its development:
 
 **Crypto donations:**
 
-**Bitcoin (BTC):** `bc1qv0ddjg3wcgujk9ad66v9msz8manu5tanhvq0fn`
-
-**ERC-20 USDT:** `0x79F57C9D45d2D40420EF071DDAaA27057618E7C8`
+- **Bitcoin (BTC):** `bc1qv0ddjg3wcgujk9ad66v9msz8manu5tanhvq0fn`
+- **ERC-20 USDT:** `0x79F57C9D45d2D40420EF071DDAaA27057618E7C8`
 
 *Every contribution helps make this project better!*
 
