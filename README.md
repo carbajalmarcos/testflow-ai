@@ -903,9 +903,8 @@ If you find **testflow-ai** useful, consider supporting its development:
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/carbajalmarcos)
 
 **Crypto donations:**
-
-- **Bitcoin (BTC):** `bc1qv0ddjg3wcgujk9ad66v9msz8manu5tanhvq0fn`
-- **ERC-20 USDT:** `0x79F57C9D45d2D40420EF071DDAaA27057618E7C8`
+**Bitcoin (BTC):** `bc1qv0ddjg3wcgujk9ad66v9msz8manu5tanhvq0fn`
+**ERC-20 USDT:** `0x79F57C9D45d2D40420EF071DDAaA27057618E7C8`
 
 *Every contribution helps make this project better!*
 
