@@ -1,6 +1,6 @@
 {
     "name": "testflow-ai",
-    "version": "0.5.4",
+    "version": "0.5.5",
     "description": "Declarative API testing powered by YAML flows. Replace Postman with version-controlled, AI-friendly test definitions.",
     "author": "Marcos Carbajal",
     "license": "MIT",
