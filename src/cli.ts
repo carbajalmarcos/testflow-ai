@@ -51,7 +51,7 @@ program
 
             process.exit(report.failedFlows > 0 ? 1 : 0);
         } catch (err) {
-            console.error(`\n❌ ${err instanceof Error ? err.message : err}`);
+            console.error(`\nError: ${err instanceof Error ? err.message : err}`);
             process.exit(1);
         }
     });

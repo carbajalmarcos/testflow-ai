@@ -11,28 +11,28 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-green.svg?style=for-the-badge)](https://nodejs.org)
 
-✅ **Multi-step flows** (create → capture → reuse → assert)  
-🤖 **Validate complex responses with AI** (privacy-first via Ollama)  
-📄 **Keep API context in Markdown** (great for humans & agents)
+**Multi-step flows** (create → capture → reuse → assert)  
+**Validate complex responses with AI** (privacy-first via Ollama)  
+**Keep API context in Markdown** (great for humans & agents)
 
-[📖 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [💻 Examples](#-real-world-example) • [🤖 AI Providers](#-ai-powered-evaluation)
+[Documentation](#-documentation) • [Quick Start](#-quick-start) • [Examples](#-real-world-example) • [AI Providers](#-ai-powered-evaluation)
 
 </div>
 
 ---
 
-## 🎯 What is testflow-ai?
+## What is testflow-ai?
 
 **testflow-ai** lets you describe API scenarios in YAML files, run them from the command line or as a library, and (optionally) ask an AI model to judge complex responses. No GUI, no vendor lock‑in, and it works with any HTTP/GraphQL API.
 
-> **💡 Born from real-world frustration:**  
+> **Born from real-world frustration:**  
 > After days of testing APIs with Postman and burning tokens with ChatGPT, I built this to centralize tests in version-controlled YAML files with local AI support.  
 > I wanted something that felt more like a **test agent**: a tool that could **create data, mutate it, delete it, and walk full flows end‑to‑end**, but defined in plain files, close to the code, and easy to run in CI.  
 > **testflow-ai** is that tool: a thin engine that turns YAML flows into real HTTP calls, variable captures, assertions, and (if you want) AI‑powered checks.
 
 ---
 
-## ✨ Why it's different
+## Why it's different
 
 Most API testing tools are either **GUI-first** (collections) or **code-first** (JS/TS test code).  
 **testflow-ai** is **flow-first**: readable YAML that runs in CI — with an optional AI judge when classic assertions aren't enough.
@@ -45,14 +45,14 @@ Most API testing tools are either **GUI-first** (collections) or **code-first** 
 
 ---
 
-## ✅ When to use testflow-ai
+## When to use testflow-ai
 
 - You want **version-controlled API E2E flows** (not a GUI collection)
 - You need **multi-step chaining** (create → capture id → update → verify)
 - You want **CI/CD-ready output** (console/json/markdown + exit codes + no external deps)
 - You sometimes need an **AI judge** for fuzzy checks (content quality, summaries, "is this coherent?")
 
-## 🚫 When NOT to use it
+## When NOT to use it
 
 - You only need **schema/property-based fuzzing** from OpenAPI
 - You prefer **writing tests in code** (Jest/Vitest) with full programmatic control
@@ -60,7 +60,7 @@ Most API testing tools are either **GUI-first** (collections) or **code-first** 
 
 ---
 
-## 🆚 What testflow-ai optimizes for
+## What testflow-ai optimizes for
 
 <div align="center">
 
@@ -77,28 +77,28 @@ Most API testing tools are either **GUI-first** (collections) or **code-first** 
 
 ---
 
-### ✨ Key Features
+### Key Features
 
 <div align="center">
 
-| 🎨 Feature | 📝 Description |
-|:----------:|:-------------:|
-| **📝 YAML Flows** | Define test sequences declaratively — version-controlled and human-readable |
-| **🔗 Variable Capture** | Extract values from responses, reuse in later steps automatically |
-| **✅ Rich Assertions** | 10+ operators: equals, contains, exists, greaterThan, matches, and more |
-| **🔄 GraphQL Native** | First-class support for queries and mutations |
-| **⏳ Async Polling** | `waitUntil` for operations that take time (background jobs, processing) |
-| **🤖 AI Evaluation** | Assert with natural language using Ollama, OpenAI, or Anthropic |
-| **📄 Context Files** | Define base URLs, endpoints, and rules in Markdown |
-| **📊 Multiple Formats** | Console (colored), JSON (CI/CD), or Markdown reports |
-| **🎯 Tag Filtering** | Run subsets of your test suite (`--tags smoke,e2e`) |
-| **🖥️ CLI + API** | Use from terminal (`npx testflow`) or import as a library |
+| Feature | Description |
+|:-------:|:-----------:|
+| **YAML Flows** | Define test sequences declaratively — version-controlled and human-readable |
+| **Variable Capture** | Extract values from responses, reuse in later steps automatically |
+| **Rich Assertions** | 10+ operators: equals, contains, exists, greaterThan, matches, and more |
+| **GraphQL Native** | First-class support for queries and mutations |
+| **Async Polling** | `waitUntil` for operations that take time (background jobs, processing) |
+| **AI Evaluation** | Assert with natural language using Ollama, OpenAI, or Anthropic |
+| **Context Files** | Define base URLs, endpoints, and rules in Markdown |
+| **Multiple Formats** | Console (colored), JSON (CI/CD), or Markdown reports |
+| **Tag Filtering** | Run subsets of your test suite (`--tags smoke,e2e`) |
+| **CLI + API** | Use from terminal (`npx testflow`) or import as a library |
 
 </div>
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 npm i -D testflow-ai
@@ -157,7 +157,7 @@ npx testflow --context ./context.md tests/todo.yaml
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install testflow-ai
@@ -169,7 +169,7 @@ yarn add testflow-ai
 
 ---
 
-## 🖥️ CLI Usage
+## CLI Usage
 
 ```bash
 # Run specific files
@@ -200,7 +200,7 @@ npx testflow --dir ./tests --ai-provider openai --ai-key $OPENAI_API_KEY --ai-mo
 
 ---
 
-## 💻 Programmatic API
+## Programmatic API
 
 ### Simple usage
 
@@ -222,7 +222,7 @@ process.exit(report.failedFlows > 0 ? 1 : 0);
 ---
 
 <details>
-<summary><b>💻 Real-World Example</b> (click to expand)</summary>
+<summary><b>Real-World Example</b> (click to expand)</summary>
 
 Here's a complete example using a Todo List API:
 
@@ -368,7 +368,7 @@ const result = await executor.executeFlow(flow);
 ---
 
 <details>
-<summary><b>📝 Test Flow Reference</b> (click to expand)</summary>
+<summary><b>Test Flow Reference</b> (click to expand)</summary>
 
 ### Basic structure
 
@@ -498,7 +498,7 @@ steps:
 ---
 
 <details>
-<summary><b>✅ Assertions</b> (click to expand)</summary>
+<summary><b>Assertions</b> (click to expand)</summary>
 
 <div align="center">
 
@@ -528,7 +528,7 @@ steps:
 
 ---
 
-## 🤖 AI-Powered Evaluation
+## AI-Powered Evaluation
 
 Use AI to assert things that are hard to express with traditional operators. **testflow-ai** supports multiple providers:
 
@@ -542,7 +542,7 @@ Use AI to assert things that are hard to express with traditional operators. **t
 
 </div>
 
-### 🦙 Ollama (Local, Recommended)
+### Ollama (Local, Recommended)
 
 **No cloud API keys, no data leaves your machine.**
 
@@ -584,7 +584,7 @@ const report = await runTests({
 });
 ```
 
-### 🤖 OpenAI (Cloud)
+### OpenAI (Cloud)
 
 **Requires API key from [platform.openai.com](https://platform.openai.com/api-keys)**
 
@@ -608,7 +608,7 @@ const report = await runTests({
 
 **Supported models:** `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`, `gpt-3.5-turbo`
 
-### 🧠 Anthropic (Cloud)
+### Anthropic (Cloud)
 
 **Requires API key from [console.anthropic.com](https://console.anthropic.com/)**
 
@@ -667,7 +667,7 @@ steps:
 
 > **🔒 Privacy note:** Ollama runs entirely locally. OpenAI and Anthropic send data to their APIs. Choose based on your privacy requirements.
 
-### 🤖 AI assertions in CI (recommended settings)
+### AI assertions in CI (recommended settings)
 
 AI checks can be non-deterministic. For CI, prefer:
 
@@ -688,7 +688,7 @@ ai: {
 ---
 
 <details>
-<summary><b>🔒 Security & secrets</b> (click to expand)</summary>
+<summary><b>Security & secrets</b> (click to expand)</summary>
 
 - **Avoid committing API keys.** Use environment variables (e.g. `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`).
 - The runner **redacts** common secret fields in logs (Authorization headers, tokens, cookies) when verbose mode is enabled.
@@ -712,7 +712,7 @@ headers:
 ---
 
 <details>
-<summary><b>🧩 YAML schema & autocomplete (VSCode)</b> (click to expand)</summary>
+<summary><b>YAML schema & autocomplete (VSCode)</b> (click to expand)</summary>
 
 We provide a JSON Schema for `*.yaml` test flows so you get autocomplete + validation in editors.
 
@@ -742,7 +742,7 @@ This gives you:
 ---
 
 <details>
-<summary><b>📄 Context Files</b> (click to expand)</summary>
+<summary><b>Context Files</b> (click to expand)</summary>
 
 Define your project context in Markdown. The runner uses it to resolve `{baseUrlKey}` references in your YAML flows.
 
@@ -778,7 +778,7 @@ A REST + GraphQL API for managing todo items.
 ---
 
 <details>
-<summary><b>🔄 CI/CD Integration</b> (click to expand)</summary>
+<summary><b>CI/CD Integration</b> (click to expand)</summary>
 
 **testflow-ai** works in any CI/CD pipeline:
 
@@ -810,7 +810,7 @@ That's it. If tests fail, the job fails automatically (exit code 1).
 ---
 
 <details>
-<summary><b>📊 Output Examples</b> (click to expand)</summary>
+<summary><b>Output Examples</b> (click to expand)</summary>
 
 ### Console Output
 
@@ -827,21 +827,21 @@ Summary:
 
 Narrative:
 
-✅ **Todo CRUD**
+PASS **Todo CRUD**
    → Create todo
-     📦 todoId: abc-123
+     CAPTURE todoId: abc-123
    → Read todo
    → Update todo
    → Delete todo
 
-✅ **Todo GraphQL**
+PASS **Todo GraphQL**
    → Create todo (mutation)
-     📦 todoId: def-456
+     CAPTURE todoId: def-456
    → Query todo
 
-❌ **Todo Bulk Import**
+FAIL **Todo Bulk Import**
    ✗ Import todos from CSV
-     ⚠️  Expected status to equal 200, got 500
+     WARN: Expected status to equal 200, got 500
 
 ══════════════════════════════════════════════════════════════
 ```
@@ -851,7 +851,7 @@ Narrative:
 ---
 
 <details>
-<summary><b>🗺️ Roadmap</b> (click to expand)</summary>
+<summary><b>Roadmap</b> (click to expand)</summary>
 
 - [ ] Database assertions (verify records directly via SQL)
 - [ ] gRPC / RPC support
@@ -865,7 +865,7 @@ Narrative:
 
 ---
 
-## 📚 Examples
+## Examples
 
 See the [`examples/`](./examples) directory for:
 
@@ -902,7 +902,7 @@ npx testflow --dir ./examples --context ./examples/context.md
 
 ---
 
-### ☕ Support
+### Support
 
 If **testflow-ai** saved you time, consider supporting its development:
 
